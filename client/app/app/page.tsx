@@ -203,9 +203,12 @@ export default function AppPage() {
                 )}
               </div>
 
-              {/* User avatar + dropdown */}
-              <div className="relative group">
-                <button className="flex items-center gap-2 rounded-full hover:bg-muted px-2 py-1 transition-colors">
+              {/* User avatar + buttons */}
+              <div className="relative">
+                <button
+                  onClick={() => setHouseholdDialog(true)}
+                  className="flex items-center gap-2 rounded-full hover:bg-muted px-2 py-1 transition-colors"
+                >
                   <Avatar className="h-9 w-9">
                     <AvatarFallback
                       style={{ backgroundColor: user.avatarColor }}
@@ -216,22 +219,13 @@ export default function AppPage() {
                   </Avatar>
                   <span className="text-sm font-medium hidden sm:block">{user.name}</span>
                 </button>
-                <div className="absolute right-0 mt-1 w-48 rounded-lg border border-border bg-background shadow-lg z-50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
-                  <div className="p-2 space-y-1">
-                    <button
-                      onClick={() => setHouseholdDialog(true)}
-                      className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted"
-                    >
-                      <Settings className="h-4 w-4" /> Gerir Casa
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full flex items-center gap-2 rounded-md px-3 py-2 text-sm hover:bg-muted text-red-600"
-                    >
-                      <LogOut className="h-4 w-4" /> Sair
-                    </button>
-                  </div>
-                </div>
+                <button
+                  onClick={handleLogout}
+                  className="ml-1 rounded-full p-2 hover:bg-muted transition-colors text-red-600"
+                  title="Sair"
+                >
+                  <LogOut className="h-5 w-5" />
+                </button>
               </div>
             </div>
           </div>
