@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Household {
+  id         String    @id @default(cuid())
+  name       String
+  inviteCode String    @unique @default(cuid())
+  createdAt  DateTime  @default(now())
+  members    User[]
+  items      Item[]
+  requests   Request[]
+}
+
+model User {
+  id             String        @id @default(cuid())
+  name           String
+  email          String        @unique
+  password       String
+  role           Role          @default(DEPENDENT)
+  avatarColor    String        @default("#34C759")
+  avatarInitials String        @default("?")
+  householdId    String?
+  household      Household?    @relation(fields: [householdId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  sentRequests     Request[]     @relation("SentRequests")
+  resolvedRequests Request[]     @relation("ResolvedRequests")
+  refreshTokens  RefreshToken[]
+  pushSubscription String?
+}
+
+enum Role {
+  SHOPPER
+  DEPENDENT
+}
+
+model Item {
+  id           String    @id @default(cuid())
+  name         String
+  ownerId      String?
+  isShared     Boolean   @default(false)
+  qty          Float
+  maxQty       Float
+  unit         String
+  pricePerUnit Float     @default(0)
+  category     String
+  threshold    Float     @default(1)
+  householdId  String
+  household    Household @relation(fields: [householdId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+model Request {
+  id           String        @id @default(cuid())
+  text         String
+  status       RequestStatus @default(PENDING)
+  fromId       String
+  from         User          @relation("SentRequests", fields: [fromId], references: [id])
+  resolvedById String?
+  resolvedBy   User?         @relation("ResolvedRequests", fields: [resolvedById], references: [id])
+  householdId  String
+  household    Household     @relation(fields: [householdId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+enum RequestStatus {
+  PENDING
+  APPROVED
+  DECLINED
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
